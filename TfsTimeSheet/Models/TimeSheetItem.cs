@@ -1,6 +1,7 @@
 ﻿namespace TfsTimeSheet.Models
 {
     using System;
+    using System.ComponentModel.DataAnnotations;
     using System.Configuration;
     using System.Globalization;
     using Caliburn.Micro;
@@ -19,14 +20,32 @@
 
         public int Id { get; set; }
 
+		[Required]
         public int WorkItemId { get; set; }
+
+		[Required]
+		[StringLength(250)]
 		public string Project { get; set; }
+
+		[Required]
+		[StringLength(1000)]
 		public string ServerUrl { get; set; }
+
+		[Required]
+		[StringLength(1000)]
 		public string Name { get; set; }
-        public DateTime FirstDayOfWeek { get; set; }
-        public int UserId { get; set; }
-        public bool IsTotal { get; set; }
-        public string Url {
+        
+		public DateTime FirstDayOfWeek { get; set; }
+
+		[Required]
+		[StringLength(250)]
+		public string UserName { get; set; }
+		
+		public DateTime WorkRemaining { get; set; }
+        
+		public bool IsTotal { get; set; }
+        
+		public string Url {
             get { return ConfigurationManager.AppSettings["WorkItemUrl"] + WorkItemId.ToString(CultureInfo.InvariantCulture); }
         }
 

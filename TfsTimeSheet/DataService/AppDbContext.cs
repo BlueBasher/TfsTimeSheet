@@ -17,6 +17,8 @@
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<TimeSheetItem>().Ignore(t => t.IsNotifying);
             modelBuilder.Entity<TimeSheetItem>().Ignore(t => t.Url);
+			modelBuilder.Entity<TimeSheetItem>().Ignore(t => t.WorkRemaining);
+			modelBuilder.Entity<TimeSheetItem>().Ignore(t => t.IsClosed);
             modelBuilder.Entity<TimeSheetItem>().Ignore(t => t.IsTotal);
         }
     }

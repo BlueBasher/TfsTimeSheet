@@ -15,7 +15,7 @@
 
 		public string UserName
 		{
-			get { return _tfsDataService.UserName; }
+			get { return _tfsDataService.UserDisplayName; }
 		}
 
 		public bool IsAuthenticated
@@ -48,7 +48,7 @@
 				dbEntries =
 					appDbContext.TimeSheetItems
 								.Where(t => t.FirstDayOfWeek.Equals(firstDayOfWeek) &&
-											t.UserId.Equals(_tfsDataService.UserId) &&
+											t.UserName.Equals(_tfsDataService.UserUniqueName) &&
 											t.ServerUrl.Equals(_url) &&
 											t.Project.Equals(_project))
 								.OrderBy(t => t.Name)
@@ -64,14 +64,23 @@
 			}
 
 			// Add all new tfsEntries
-			foreach (var timeSheetItem in tfsEntries.Where(timeSheetItem => !dbEntries.Any(t => t.WorkItemId.Equals(timeSheetItem.WorkItemId))))
+			foreach (var timeSheetItem in tfsEntries)
 			{
-				dbEntries.Add(new TimeSheetItem
+				var dbEntry = dbEntries.SingleOrDefault(t => t.WorkItemId.Equals(timeSheetItem.WorkItemId));
+				if (dbEntry == null)
 				{
-					WorkItemId = timeSheetItem.WorkItemId,
-					Name = timeSheetItem.Name,
-					FirstDayOfWeek = firstDayOfWeek
-				});
+					dbEntries.Add(new TimeSheetItem
+						{
+							WorkItemId = timeSheetItem.WorkItemId,
+							Name = timeSheetItem.Name,
+							WorkRemaining = timeSheetItem.WorkRemaining,
+							FirstDayOfWeek = firstDayOfWeek
+						});
+				}
+				else
+				{
+					dbEntry.WorkRemaining = timeSheetItem.WorkRemaining;
+				}
 			}
 			return dbEntries;
 		}
@@ -94,7 +103,7 @@
 					var original =
 						appDbContext.TimeSheetItems
 									.SingleOrDefault(t => t.WorkItemId.Equals(timeSheetItem.WorkItemId) &&
-														  t.UserId.Equals(_tfsDataService.UserId));
+														  t.UserName.Equals(_tfsDataService.UserUniqueName));
 
 					// Create a new item when it doesn't exist in the Db
 					if (original == null)
@@ -106,7 +115,7 @@
 								ServerUrl = _url,
 								Name = timeSheetItem.Name,
 								FirstDayOfWeek = timeSheetItem.FirstDayOfWeek,
-								UserId = _tfsDataService.UserId
+								UserName = _tfsDataService.UserUniqueName
 							};
 						appDbContext.TimeSheetItems.Add(original);
 					}

@@ -75,6 +75,16 @@
                                          ContentBinding="{Binding Name}"
                                          Width="*"
                                          MinWidth="200" />
+                <DataGridTextColumn x:Name="WorkRemainingColumn"
+                                    Header="Work Remaining"
+                                    MinWidth="100"
+                                    IsReadOnly="True">
+                    <DataGridTextColumn.Binding>
+                        <Binding Path="WorkRemaining" 
+                                 StringFormat="{}{0:HH:mm}">
+                        </Binding>
+                    </DataGridTextColumn.Binding>
+                </DataGridTextColumn>
                 <DataGridCheckBoxColumn x:Name="IsClosedColumn"
                                         Header="Closed"
                                         Binding="{Binding IsClosed}"

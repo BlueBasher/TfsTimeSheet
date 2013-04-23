@@ -3,6 +3,7 @@
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using Microsoft.TeamFoundation.Client;
     using Microsoft.TeamFoundation.Server;
@@ -33,7 +34,7 @@
 
             }
         }
-        public string UserName
+        public string UserDisplayName
         {
             get
             {
@@ -42,13 +43,13 @@
                         : "Not logged in";
             }
         }
-        public int UserId
+        public string UserUniqueName
         {
             get
             {
                 return IsAuthenticated
-                        ? _tfs.ConfigurationServer.AuthorizedIdentity.UniqueUserId
-                        : 0;
+                        ? _tfs.ConfigurationServer.AuthorizedIdentity.UniqueName
+                        : "Not logged in";
             }
         }
         #endregion
@@ -129,6 +130,7 @@
                                 {
                                     WorkItemId = workItem.Id,
 									Name = workItem.Title,
+									WorkRemaining = Convert.ToDateTime(TimeSpan.FromHours(Convert.ToDouble(workItem["Remaining work"])).ToString()),
 									Project = _project,
 									ServerUrl = _url
                                 });
@@ -142,10 +144,10 @@
             var remaining = Convert.ToDouble(workItem["Remaining work"]);
             var completed = Convert.ToDouble(workItem["Completed work"]);
 
-			var doRemainingCheck = workItem.AreaPath != _ignoreRemainingArea;
+			var doRemainingCheck = !workItem.AreaPath.EndsWith(@"\" + _ignoreRemainingArea);
 
             if ((doRemainingCheck) &&
-				(remaining < delta.TotalHours))
+				(remaining - delta.TotalHours < 0))
             {
                 throw new InvalidOperationException(string.Format("There are only {0} hours remaining. Can't book {1} hours.", remaining, delta.TotalHours));
             }

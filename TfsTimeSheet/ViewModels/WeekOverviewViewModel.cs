@@ -164,9 +164,10 @@
 		#region Public Methods
 		public void Login()
 		{
+			var projectName = ConfigurationManager.AppSettings["TfsProject"];
 			_dataService.Connect(
 				ConfigurationManager.AppSettings["TfsUrl"],
-				ConfigurationManager.AppSettings["TfsProject"],
+				projectName,
 				ConfigurationManager.AppSettings["TfsWorkItemQuery"],
 				ConfigurationManager.AppSettings["TfsIgnoreRemainingArea"],
 				ConfigurationManager.AppSettings["TfsActiveState"],
@@ -175,8 +176,14 @@
 			CurrentUserName = _dataService.UserName;
 
 			GetWeekData();
-
 			NotifyVisibilityChanged();
+
+			DisplayName = projectName;
+			var parent = Parent as Screen;
+			if (parent != null)
+			{
+				parent.NotifyOfPropertyChange(() => DisplayName);
+			}
 		}
 
 		public void Logout()
@@ -255,6 +262,10 @@
 
 			foreach (var item in _week)
 			{
+				total.WorkRemaining = total.WorkRemaining
+										   .AddHours(item.WorkRemaining.Hour)
+										   .AddMinutes(item.WorkRemaining.Minute)
+										   .AddSeconds(item.WorkRemaining.Second);
 				total.Monday = total.Monday
 									.AddHours(item.Monday.Hour)
 									.AddMinutes(item.Monday.Minute)
