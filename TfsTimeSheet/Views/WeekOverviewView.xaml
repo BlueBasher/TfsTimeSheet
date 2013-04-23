@@ -5,10 +5,14 @@
     <StackPanel>
         <DockPanel HorizontalAlignment="Stretch"
                    Margin="0,0,0,10">
-            <Button x:Name="Previous"
-                    Style="{StaticResource BackButtonStyle}" />
+            <Button x:Name="Previous" 
+                    Template="{StaticResource BackButtonTemplate}"
+                    Height="32"
+                    Width="32" />
             <Button x:Name="Next"
-                    Style="{StaticResource BackButtonStyle}"                    
+                    Template="{StaticResource BackButtonTemplate}"
+                    Height="32"
+                    Width="32"
                     Margin="10,0,0,0"
                     RenderTransformOrigin="0.5,0.5">
                 <Button.RenderTransform>
@@ -17,11 +21,22 @@
             </Button>
             <TextBlock x:Name="Title"
                        FontSize="32"
-                       Margin="10,0,0,0" />
-            <TextBlock x:Name="CurrentUserName"
+                       Margin="10,0,0,0">
+            </TextBlock>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <TextBlock x:Name="CurrentUserName"
                        FontSize="24"
                        Margin="0,0,10,0"
-                       HorizontalAlignment="Right"/>
+                       HorizontalAlignment="Right" />
+                <Button x:Name="Login"
+                    Content="Login"
+                    Width="50"
+                    HorizontalAlignment="Right" />
+                <Button x:Name="Logout"
+                    Content="Logout"
+                    Width="50"
+                    HorizontalAlignment="Right" />
+            </StackPanel>
         </DockPanel>
         <DataGrid x:Name="WeekDataGrid"
                   ItemsSource="{Binding Week}"

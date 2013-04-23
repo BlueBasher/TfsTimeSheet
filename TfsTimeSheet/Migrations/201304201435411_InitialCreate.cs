@@ -13,6 +13,8 @@ namespace TfsTimeSheet.Migrations
                     {
                         Id = c.Int(nullable: false, identity: true),
                         WorkItemId = c.Int(nullable: false),
+                        Project = c.String(),
+                        ServerUrl = c.String(),
                         Name = c.String(),
                         FirstDayOfWeek = c.DateTime(nullable: false),
                         UserId = c.Int(nullable: false),

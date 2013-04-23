@@ -8,74 +8,68 @@
                 <ResourceDictionary>
                     <local:AppBootstrapper x:Key="bootstrapper" />
 
-                    <SolidColorBrush x:Key="BlackColor"
-                                     Color="Black" />
-                    <SolidColorBrush x:Key="WhiteColor"
-                                     Color="White" />
-
-                    <Style x:Key="BackButtonStyle" TargetType="Button">
-                        <Setter Property="MinWidth" Value="0" />
-                        <Setter Property="Width" Value="48" />
-                        <Setter Property="Height" Value="48" />
-                        <Setter Property="VerticalAlignment" Value="Bottom" />
-                        <Setter Property="FontFamily" Value="Segoe UI Symbol" />
-                        <Setter Property="FontWeight" Value="Normal" />
-                        <Setter Property="FontSize" Value="56" />
-                        <Setter Property="AutomationProperties.AutomationId" Value="BackButton" />
-                        <Setter Property="AutomationProperties.Name" Value="Back" />
-                        <Setter Property="AutomationProperties.ItemType" Value="Navigation Button" />
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="Button">
-                                    <Grid x:Name="RootGrid">
-                                        <Grid Margin="-1,-16,0,0">
-                                            <TextBlock x:Name="BackgroundGlyph" Text="&#xE0A8;" Foreground="{StaticResource WhiteColor}" />
-                                            <TextBlock x:Name="NormalGlyph" Text="&#xE071;" Foreground="{StaticResource BlackColor}" />
-                                            <TextBlock x:Name="ArrowGlyph" Text="&#xE0A6;" Foreground="{StaticResource WhiteColor}" Opacity="0" />
-                                        </Grid>
-                                        <Rectangle
-                            x:Name="FocusVisualWhite"
-                            IsHitTestVisible="False"
-                            StrokeEndLineCap="Square"
-                            StrokeDashArray="1,1"
-                            Opacity="0"
-                            StrokeDashOffset="1.5" />
-                                        <Rectangle
-                            x:Name="FocusVisualBlack"
-                            IsHitTestVisible="False"
-                            StrokeEndLineCap="Square"
-                            StrokeDashArray="1,1"
-                            Opacity="0"
-                            StrokeDashOffset="0.5" />
-                                        <VisualStateManager.VisualStateGroups>
-                                            <VisualStateGroup x:Name="CommonStates">
-                                                <VisualState x:Name="Normal" />
-                                                <VisualState x:Name="PointerOver" />
-                                                <VisualState x:Name="Pressed">
-                                                    <Storyboard>
-                                                        <ColorAnimation Storyboard.TargetName="BackgroundGlyph" 
-                                                                        Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)"
-                                                                        To="Black"
-                                                                        Duration="0:0:0.5"/>
-                                                        <ColorAnimation Storyboard.TargetName="NormalGlyph" 
-                                                                        Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)"
-                                                                        To="White"
-                                                                        Duration="0:0:0.5"/>
-                                                    </Storyboard>
-                                                </VisualState>
-                                                <VisualState x:Name="Disabled" />
-                                            </VisualStateGroup>
-                                            <VisualStateGroup x:Name="FocusStates">
-                                                <VisualState x:Name="Focused" />
-                                                <VisualState x:Name="Unfocused" />
-                                                <VisualState x:Name="PointerFocused" />
-                                            </VisualStateGroup>
-                                        </VisualStateManager.VisualStateGroups>
-                                    </Grid>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
+                    <ControlTemplate x:Key="BackButtonTemplate" TargetType="Button">
+                        <Image Source="Content\BackButton.png" x:Name="img" />
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="img" Storyboard.TargetProperty="(Image.Source)">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <BitmapImage UriSource="Content\BackButtonOver.png" />
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="img" Storyboard.TargetProperty="(Image.Source)">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <BitmapImage UriSource="Content\BackButton.png" />
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="img" Storyboard.TargetProperty="(Image.Source)">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <BitmapImage UriSource="Content\BackButtonPressed.png" />
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="img" Storyboard.TargetProperty="(Image.Source)">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <BitmapImage UriSource="Content\BackButton.png" />
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                    
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

@@ -5,18 +5,15 @@
 
     public class ShellViewModel : Conductor<object>
     {
-        public ShellViewModel()
-        {
-            ShowWeekOverview();
-        }
+	    public Visibility MenuVisibility { get { return Visibility.Collapsed; } }
 
-        public Visibility MenuVisibility { get { return Visibility.Collapsed; } }
-
-        protected override void OnInitialize()
+		protected override void OnInitialize()
         {
             base.OnInitialize();
             DisplayName = "Tfs Timesheet";
-        }
+
+			ShowWeekOverview();
+		}
 
         public void ShowWeekOverview()
         {

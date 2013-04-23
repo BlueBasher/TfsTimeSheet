@@ -16,18 +16,21 @@
         private WorkItemStore _workItemStore;
         private ICommonStructureService4 _commonStructureService;
 
+		private string _url;
         private string _project;
         private string _workitemQueryText;
-        private string _activeState;
+		private string _ignoreRemainingArea;
+		private string _activeState;
         private string _closedState;
 
-        public bool IsAuthenticated
+	    public bool IsAuthenticated
         {
             get
             {
-                return _tfs != null &&
-                       _tfs.ConfigurationServer != null &&
-                       _tfs.ConfigurationServer.AuthorizedIdentity != null;
+	            return _tfs != null &&
+	                   _tfs.ConfigurationServer != null &&
+	                   _tfs.ConfigurationServer.AuthorizedIdentity != null;
+
             }
         }
         public string UserName
@@ -51,7 +54,7 @@
         #endregion
 
         #region Public Methods
-        public void Connect(string url, string project, string workItemQuery, string activeState, string closedState)
+        public void Connect(string url, string project, string workItemQuery, string ignoreRemainingArea, string activeState, string closedState)
         {
             if (string.IsNullOrWhiteSpace(url))
             {
@@ -65,6 +68,10 @@
             {
                 throw new ArgumentNullException("workItemQuery");
             }
+			if (string.IsNullOrWhiteSpace(ignoreRemainingArea))
+            {
+                throw new ArgumentNullException("ignoreRemainingArea");
+            }
             if (string.IsNullOrWhiteSpace(activeState))
             {
                 throw new ArgumentNullException("activeState");
@@ -74,7 +81,9 @@
                 throw new ArgumentNullException("closedState");
             }
 
+	        _url = url;
             _project = project;
+	        _ignoreRemainingArea = ignoreRemainingArea;
             _activeState = activeState;
             _closedState = closedState;
 
@@ -89,10 +98,14 @@
 
         public void Disconnect()
         {
-            if (IsAuthenticated)
-            {
-                _tfs.Disconnect();
-            }
+	        if (!IsAuthenticated)
+	        {
+		        return;
+	        }
+
+	        _tfs.Disconnect();
+	        _tfs.Dispose();
+	        _tfs = null;
         }
 
         public IEnumerable<TimeSheetItem> GetWorkItems(DateTime iterationDay, string userName)
@@ -115,7 +128,9 @@
                             select new TimeSheetItem
                                 {
                                     WorkItemId = workItem.Id,
-                                    Name = workItem.Title
+									Name = workItem.Title,
+									Project = _project,
+									ServerUrl = _url
                                 });
 
             return result;
@@ -127,13 +142,20 @@
             var remaining = Convert.ToDouble(workItem["Remaining work"]);
             var completed = Convert.ToDouble(workItem["Completed work"]);
 
-            if (remaining < delta.TotalHours)
+			var doRemainingCheck = workItem.AreaPath != _ignoreRemainingArea;
+
+            if ((doRemainingCheck) &&
+				(remaining < delta.TotalHours))
             {
                 throw new InvalidOperationException(string.Format("There are only {0} hours remaining. Can't book {1} hours.", remaining, delta.TotalHours));
             }
 
-            workItem["Remaining work"] = remaining - delta.TotalHours;
-            workItem["Completed work"] = completed + delta.TotalHours;
+	        if (doRemainingCheck)
+	        {
+		        workItem["Remaining work"] = remaining - delta.TotalHours;
+	        }
+
+	        workItem["Completed work"] = completed + delta.TotalHours;
             workItem.State = _activeState;
             workItem.Save();
         }

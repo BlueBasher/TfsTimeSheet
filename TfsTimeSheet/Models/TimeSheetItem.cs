@@ -20,7 +20,9 @@
         public int Id { get; set; }
 
         public int WorkItemId { get; set; }
-        public string Name { get; set; }
+		public string Project { get; set; }
+		public string ServerUrl { get; set; }
+		public string Name { get; set; }
         public DateTime FirstDayOfWeek { get; set; }
         public int UserId { get; set; }
         public bool IsTotal { get; set; }
@@ -96,5 +98,6 @@
                 NotifyOfPropertyChange(() => Friday);
             }
         }
+
     }
 }
